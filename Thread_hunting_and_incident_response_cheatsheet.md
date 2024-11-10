@@ -769,3 +769,64 @@ Check `HKCU\Software\Classes\CLSID` - usually there should be none or only very 
  - https://lolbas-project.github.io/ (List of legitimate option which can be misuesd in attacks)
 
 
+## Wazuh
+
+Ideal for beginner threadhunting lap setups.
+
+**Recommended additional logs for Windows**
+
+Add those lines to `C:\Program Files (x86)\ossec-agent\ossec.conf`:
+
+```xml
+  <localfile>
+    <location>Microsoft-Windows-PowerShell/Operational</location>
+    <log_format>eventchannel</log_format>
+  </localfile>
+
+  <localfile>
+    <location>Microsoft-Windows-Windows Defender/Operational</location>
+    <log_format>eventchannel</log_format>
+  </localfile>
+
+  <localfile>
+    <location>Microsoft-Windows-Sysmon/Operational</location>
+    <log_format>eventchannel</log_format>
+  </localfile>
+```
+
+To ingest all logs not just those creating alerts do the following configuration changes:
+
+```xml
+<ossec_config>
+  <global>
+    <jsonout_output>yes</jsonout_output>
+    <alerts_log>yes</alerts_log>
+    <logall>yes</logall>
+    <logall_json>yes</logall_json>
+    ...
+```
+
+Set `logall` and `logall_json` to `yes` in the file `/var/ossec/etc/ossec.conf`.
+
+Then edit `/etc/filebeat/filebeat.yml` and set `enabled` for `archives` to `true`:
+
+```yaml
+...
+filebeat.modules:
+  - module: wazuh
+    alerts:
+      enabled: true
+    archives:
+      enabled: true
+...
+```
+
+Then restart all needed services:
+
+```bash
+systemctl restart filebeat
+systemctl restart wazuh-manager
+```
+
+Then open in Wazuh `Dashboard Management` -> `Dashboard Management` -> `Index pattern` and add an index for `wazuh-archives-*`.
+
