@@ -784,6 +784,11 @@ Add those lines to `C:\Program Files (x86)\ossec-agent\ossec.conf`:
   </localfile>
 
   <localfile>
+    <location>Windows PowerShell</location>
+    <log_format>eventchannel</log_format>
+  </localfile>
+
+  <localfile>
     <location>Microsoft-Windows-Windows Defender/Operational</location>
     <log_format>eventchannel</log_format>
   </localfile>
