@@ -1,6 +1,6 @@
-# Thread Hunting & Incident Response Cheatsheet
+# Thread hunting & incident response cheatsheet
 
-## Network Analysis
+## Network analysis
 
 ### Quick overview with NetworkMiner
 
