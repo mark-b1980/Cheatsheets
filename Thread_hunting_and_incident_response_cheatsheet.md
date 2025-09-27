@@ -125,6 +125,8 @@ Ask the following questions:
  - `mail()` (also often used in regular web development)
  - `base64_decode()` (also often used in regular web development)
 
+
+
 ### Techniques
 
  - **File-Stacking** (find recently added or modified files - e.g. changed or added source files after the last update)
@@ -466,7 +468,7 @@ Uses of `svchost.exe` without the `-k` option sould raise suspicion! This proces
  - `cscript.exe`
  - `cms.exe`
 
-```s
+```sql
 index=* EventCode=1
 (Image="*mshta.exe*" OR Image="*rundll32.exe*" OR Image="*regsvr32.exe*" OR Image="*services.exe*" OR Image="*winword.exe*" OR Image="*wmic.exe*" OR Image="*wmiprvse.exe*" OR Image="*powerpnt.exe*" OR Image="*excel.exe*" OR Image="*msaccess.exe*" OR Image="*mpub.exe*" OR Image="*visio.exe*" OR Image="*outlook.exe*" OR Image="*chrome.exe*" OR Image="*iexplorer.exe*" OR Image="*sqlserver.exe*"  OR Image="*powershell.exe*" OR Image="*wscript.exe*" OR Image="*cscript.exe*" OR Image="*cms.exe*")
 | stats count by Image, ParentImage
@@ -521,6 +523,11 @@ index=* EventCode=1
  - **4799** - security-enabled local group membership was enumerated
  - **5136** - a directory service object was modiefied (e.g.: GPO - Group Policy Object)
 
+```sql
+index=* EventCode=4624
+| sort _time
+```
+
 #### Important event ID numbers for PsExec related hunting
 
  - **4688** - Process started (Sysmon EID 1)
@@ -529,14 +536,14 @@ index=* EventCode=1
  - **5140** - Windows share accessed
  - **5145** - Windows share request (look out for `IPC$` or `ADMIN$`)
 
-```s
+```sql
 index=* (EventCode=4688 OR EventCode=4697 OR EventCode=7045 OR EventCode=5140 OR EventCode=5145)
 | sort _time
 ```
 
 Look out for `psexecsvc` or general executables that use `\\` and `-accepteula`!
 
-```s
+```sql
 index=* (Image="psexecsvc.exe" OR Image="*.exe" AND (CommandLine="*\\\\*" AND CommandLine="*-accepteula*"))
 | table _time, Computer, User, Image, CommandLine
 | sort _time
@@ -584,6 +591,23 @@ Check event IDs `400`, `600` and `800` for powershell versions lower than the ho
 
  - **4104** - Powershell script started (Search for the keyword `Amsi`)  
    Scanner: https://blog.f-secure.com/hunting-for-amsi-bypasses/
+
+### USB device hunting
+
+ - **2001** - USB device detected (potentially Sysmon event 6 could be useful also)
+ - **2003** - USB device removed 
+
+```sql
+index=* (EventCode=2001 OR EventCode=2003)
+| table _time, ComputerName, EventCode, Message
+| sort _time 
+```
+
+```sql
+index=* ("USB" OR "Removable" OR "Storage device" OR "DeviceConnect" OR "VID_" OR "PID_")
+| table _time, ComputerName, EventCode, Message
+| sort _time 
+```
 
 #### Other useful events
 
