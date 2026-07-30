@@ -587,7 +587,7 @@ terraform {
 # AWS (state locking handled by dynamo db)
 terraform {
   backend "s3"{
-    bucket         = "pentest-experts-remote-state-file-001"
+    bucket         = "some-name-remote-state-file-001"
     key            = "terraform.tfstate"
     region         = "eu-west-2"
     dynamodb_table = "state_locking_table"
@@ -607,7 +607,7 @@ resource "aws_dynamodb_table" "terraform_state_locking" {
 # GCP (state locking handled by the bucket)
 terraform {
   backend "gcs" {
-    bucket = "pentest-experts-remote-state-file-001"  # filename "terraform.tfstate" is implicitly used
+    bucket = "some-name-remote-state-file-001"  # filename "terraform.tfstate" is implicitly used
   }
 }
 ```
