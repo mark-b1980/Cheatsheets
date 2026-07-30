@@ -30,10 +30,78 @@ Then use the **Impact X Probabbility** matrix to prioritize the identified funct
 | **Medium**        | Low        | Medium       | High        |
 | **High**          | Medium     | High         | Highest     |
 
-
-
 ### Identifying parameters and endpoints in sourcecode
 
  - `java -jar attack-surface-detector-cli-1.3.5.jar /path/to/sourcecode/`  
    https://github.com/secdec/attack-surface-detector-cli/releases
 
+---
+
+## Code- and command injection functions
+
+**JavaScript / NodeJS**
+
+ - eval
+ - Function
+ - setInterval
+ - setTimeout
+ - constructor.constructor
+ - child_process.exec (need callback function)
+ - child_process.spawn (need callback function)
+ - child_process.execSync
+ - child_process.spawnSync
+ - 
+
+**Python**
+
+ - eval
+ - exec
+ - subprocess.open
+ - subprocess.run				
+ - os.system
+ - os.popen
+
+**PHP**
+
+ - eval
+ - exec
+ - proc_open
+ - popen
+ - shell_exec
+ - passthru
+ - system
+
+**C/C++**
+
+ - execlp
+ - execvp
+ - ShellExecute
+ - system
+ - popen
+
+**C#**
+
+ - System.Diagnostics.Process.Start
+
+**Java**
+
+ - Runtime.getRuntime().exec
+
+### Code injection in JavaScript after a `throw()`-function
+
+ - `throw()` - ends execution and give back an error 
+   - `;` can't be used to execute code after - execution will be terminalted after the function and the code after `;` would be seen as code in a new line, that is never reached
+   - `+` allows the concatinate the exeution of code in that case: `throw(...) + console.log('pwned')` 
+
+### Command-execution without loading the NodeJS module
+
+```javascript
+global.process.mainModule.constructor._load('child_process').execSync('whoami').toString()
+
+require("child_process").execSync("whoami").toString()
+
+```
+
+
+
+---
